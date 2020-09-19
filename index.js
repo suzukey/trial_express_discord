@@ -13,6 +13,21 @@ anonymouslyClient.on("ready", () => {
 
 // --------------------------------------
 
+const WebSocket = require("ws")
+
+const wss = new WebSocket.Server({ port: 5000, host: "127.0.0.1" }, () => {
+  console.log(`WebSocket server is listening to port ${wss.address().port}`)
+})
+
+wss.on("connection", function connection(ws, req) {
+  console.log("client connected.")
+  ws.on("close", () => {
+    console.log("client disconnected.")
+  })
+})
+
+// --------------------------------------
+
 const express = require("express")
 const multer = require("multer")
 const upload = multer()
@@ -20,8 +35,8 @@ const upload = multer()
 const app = express()
 app.use(express.json())
 
-const server = app.listen(3000, () => {
-  console.log(`Server is listening to port ${server.address().port}`)
+const server = app.listen(3000, "127.0.0.1", () => {
+  console.log(`HTTP server is listening to port ${server.address().port}`)
 })
 
 app.get("/", (req, res) => {
