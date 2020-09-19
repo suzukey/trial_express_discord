@@ -69,6 +69,20 @@ app.get("/guilds", (req, res) => {
   res.json(filteredGuilds)
 })
 
+app.post("/guilds", upload.none(), (req, res) => {
+  const client = adminClient
+  const name = req.body.name
+  const options = {}
+
+  client.guilds
+    .create(name, options)
+    .then(() => res.json({ status: "success" }))
+    .catch((err) => {
+      console.log(err)
+      res.json({ status: "error" })
+    })
+})
+
 app.delete("/guilds/:guildId", (req, res) => {
   const client = adminClient
   client.guilds
@@ -87,7 +101,12 @@ app.delete("/guilds/:guildId", (req, res) => {
 
 app.get("/regions", async (req, res) => {
   const regions = await adminClient.fetchVoiceRegions()
-  const regionNames = regions.map((region) => region.name)
+  const regionNames = regions.map((region) => {
+    return {
+      id: region.id,
+      name: region.name,
+    }
+  })
 
   res.json(regionNames)
 })
